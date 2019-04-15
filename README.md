@@ -34,7 +34,74 @@ Follow the instructions for each of the following code samples in [Compliler Exp
 6. [2d array with mul](https://godbolt.org/z/cHwSTR)
    1. Port this code to VisUAL. (It's the same as the previous but with multiplicatoin).
    2. Add your 32-bit unsigned integer multiplication algorithm as a subroutine and run the code. Verify its correctness.
+main
+	   adr 		r10, iarr
+        sub     sp, sp, #8
+        movs    r3, #0
+        str     r3, [sp, #4]
+        b       L2
+L5
+        movs    r3, #0
+        str     r3, [sp]
+        b       L3
+L4
+        ldr     r3, [sp, #4]
+        ldr     r2, [sp]
+        
+        ;mul     r3, r2, r3
+        ADR		r0, numbers
 
+		LDR		r3, [r0]
+		LDR		r2, [r0, #4]
+		MOV		r7, #0
+		MOV		r8, #0
+		MOV		r9, #0
+loop
+		TST		r2, #1
+		BEQ		shift
+		ADDS		r8, r8, r3
+		ADC		r9, r9, r7
+shift
+		LSR		r2, r2, #1
+		LSLS		r3, r3, #1
+		ADC		r7, r7, #0
+		CMP		r2, #0
+		BGT		loop
+		ADR		r0, result
+		STR		r8, [r0]
+		ADR		r0, carry
+		STR		r9, [r0]
+		MOV		r3, r9
+		
+        lsls    r1, r3, #1
+        ldr     r0, r10
+        ldr     r2, [sp, #4]
+        mov     r3, r2
+        lsls    r3, r3, #2
+        add     r3, r3, r2
+        ldr     r2, [sp]
+        add     r3, r3, r2
+        str     r1, [r0, r3, lsl #2]
+        ldr     r3, [sp]
+        adds    r3, r3, #1
+        str     r3, [sp]
+L3
+        ldr     r3, [sp]
+        cmp     r3, #4
+        ble     L4
+        ldr     r3, [sp, #4]
+        adds    r3, r3, #1
+        str     r3, [sp, #4]
+L2
+        ldr     r3, [sp, #4]
+        cmp     r3, #9
+        ble     L5
+        movs    r3, #0
+        mov     r0, r3
+        add     sp, sp, #8
+        b     lr
+L7
+iarr       FILL 52
 ## Submission
 1. Fork this repository
 2. Clone and implement.
